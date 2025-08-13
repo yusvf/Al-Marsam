@@ -319,39 +319,41 @@
       <div class="feature-banner has-bg-image has-after"
   style="background-image: url('./assets/images/feature-banner.jpg'); position: relative; overflow: hidden; cursor: pointer;">
 
-  <!-- Placeholder للصورة مع زر التشغيل -->
-  <div id="placeholder" class="placeholder" style="
+  <!-- Placeholder -->
+  <div id="placeholder" style="
     position:absolute; top:0; left:0; width:100%; height:100%;
-    display:flex; justify-content:center; align-items:center; flex-direction:column;
+    display:flex; justify-content:center; align-items:center;
     background: rgba(255,255,255,0.0); z-index:2; transition: opacity 0.5s ease;">
     <button class="play-btn" aria-label="play video">
       <img src="./assets/images/play.svg" width="60" height="60" loading="lazy" alt="play icon">
     </button>
   </div>
 
-  <!-- زر الإيقاف بنفس شكل زر التشغيل -->
+  <!-- زر الإيقاف -->
   <button id="stopBtn" class="play-btn" aria-label="stop video" style="
     position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
     display: none; z-index: 3;">
-  <img src="./assets/images/stop.svg" width="60" height="60" loading="lazy" alt="stop icon">
-</button>
+    <img src="./assets/images/stop.svg" width="60" height="60" loading="lazy" alt="stop icon">
+  </button>
+
   <!-- الفيديو -->
-  <video id="myVideo" autoplay playsinline style="
-    width:100%; height:100%; object-fit:cover; display:block; position:absolute; top:0; left:0;
-    pointer-events:none; transform: scale(1); transition: transform 3s ease; opacity: 1;">
+  <video id="myVideo" playsinline style="
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    object-fit:cover; opacity:0; transition: opacity 0.5s ease; transform: scale(1);">
     <source src="./assets/videos/your-video.mp4" type="video/mp4">
     متصفحك لا يدعم الفيديو.
   </video>
 
   <style>
-    /* تأثير الزوم */
-    .zoom { transform: scale(1.1); }
-    /* إخفاء/إظهار */
-    .hidden { opacity: 0; pointer-events: none; }
-    /* زر الإيقاف يظهر فقط لو الفيديو شغال وعليه hover */
-    .video-playing:hover #stopBtn {
-      display: block !important;
+    /* الفيديو responsive */
+    .feature-banner {
+      width: 100%;
+     margin: auto; /* أقصى عرض للفيديو */
+      aspect-ratio: 16 / 9; /* نسبة العرض للارتفاع */
+      margin: auto;
     }
+    .zoom { transform: scale(1.1); transition: transform 3s ease; }
+    .video-playing:hover #stopBtn { display: block !important; }
   </style>
 
   <script>
@@ -362,33 +364,30 @@
 
     let isPlaying = false;
 
-    // تشغيل الفيديو عند الضغط في أي مكان على البانر
     banner.addEventListener("click", () => {
       if (!isPlaying) {
-        placeholder.classList.add("hidden");
-        banner.classList.add("video-playing");
+        placeholder.style.opacity = "0";
+        video.style.opacity = "1";
         video.classList.add("zoom");
         video.currentTime = 0;
         video.play();
+        banner.classList.add("video-playing");
         isPlaying = true;
       }
     });
 
-    // إرجاع الصورة
     function resetToPlaceholder() {
       video.pause();
+      video.style.opacity = "0";
+      placeholder.style.opacity = "1";
       video.classList.remove("zoom");
       banner.classList.remove("video-playing");
-      placeholder.classList.remove("hidden");
       isPlaying = false;
     }
 
-    // عند انتهاء الفيديو
     video.addEventListener("ended", resetToPlaceholder);
-
-    // زر الإيقاف
     stopBtn.addEventListener("click", (e) => {
-      e.stopPropagation(); // منع إعادة التشغيل
+      e.stopPropagation();
       resetToPlaceholder();
     });
   </script>
